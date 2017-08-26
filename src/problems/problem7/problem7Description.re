@@ -17,7 +17,7 @@ A `Functor` is a module function, a map from one module to another. This is one 
 ```reason
 module Show = {
   module type S = {type t; let show: t => string;};
-  module type Showable = {include Showable'; let print: t => unit;};
+  module type Showable = {include S; let print: t => unit;};
   module Make (S: S) :(Showable with type t = S.t) => {
     include S;
     let print (value: t) :unit => Js.log @@ show value;
@@ -54,7 +54,7 @@ Inside Make, we write out the instance that satisfies the constraints. The retur
 ```reason
 module Show = {
   module type S = {type t; let show: t => string;};
-  module type Showable = {include Showable'; let print: t => unit;};
+  module type Showable = {include S; let print: t => unit;};
   module Make (S: S) :(Showable with type t = S.t) => {
     include S;
     let print (value: t) :unit => Js.log @@ show value;
