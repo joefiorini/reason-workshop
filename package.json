@@ -9,9 +9,8 @@
     "watch": "npm-run-all --parallel -c run bundle-watch build-watch"
   },
   "dependencies": {
-    "bs-containers": "bassjacob/bs-containers",
     "bs-express": "buckletypes/bs-express",
-    "bs-platform": "1.7.5",
+    "bs-platform": "1.9.1",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
