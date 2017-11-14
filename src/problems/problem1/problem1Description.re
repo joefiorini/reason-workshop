@@ -16,12 +16,12 @@ If you open the file `src/problems/problem1/problem1.re` in your editor, you'll 
 /*
   create a component with a displayName "Problem1"
   requires the make function the "spreads" the component to implement:
-    * let render = fun state self => ReasonReact.reactElement;
+    * let render = self => ReasonReact.reactElement;
   */
-let component = ReasonReact.statelessComponent "Problem1";
-let make children => {
+let component = ReasonReact.statelessComponent("Problem1");
+let make = (_children) => {
   ...component,
-  render: fun () _self => {
+  render: (_self) => {
     <div />
   }
 }
@@ -31,7 +31,7 @@ We'll touch on modules, records and everything else as we go through this worksh
 
 ```reason
 <div>
-  (ReasonReact.stringToElement "a string to render")
+  (ReasonReact.stringToElement("a string to render"))
 </div>
 ```
 |};
