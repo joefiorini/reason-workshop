@@ -2,7 +2,7 @@ open Express;
 
 open ReactRouter;
 
-type middlewareFn = Request.t => Response.t => Next.t => done_;
+type middlewareFn = (Request.t, Response.t, Next.t) => done_;
 
 type method =
   | HEAD
@@ -12,52 +12,51 @@ type method =
   | DELETE;
 
 type route =
-  | Route (method, string, middlewareFn)
-  | Use middlewareFn
-  | UseWithPath (string, middlewareFn)
-  | Static (string, string);
+  | Route((method, string, middlewareFn))
+  | Use(middlewareFn)
+  | UseWithPath((string, middlewareFn))
+  | Static((string, string));
 
-let applyRoute server route =>
+let applyRoute = (server, route) =>
   switch route {
-  | Route (HEAD, _, _) => Js_exn.raiseError "not implemented yet"
-  | Route (GET, path, handler) => App.get server ::path (Middleware.from handler)
-  | Route (POST, path, handler) => App.post server ::path (Middleware.from handler)
-  | Route (PUT, _, _) => Js_exn.raiseError "not implemented yet"
-  | Route (DELETE, _, _) => Js_exn.raiseError "not implemented yet"
-  | Use handler => App.use server (Middleware.from handler)
-  | UseWithPath (path, handler) => App.useOnPath server ::path (Middleware.from handler)
-  | Static (path, folder) =>
-    App.useOnPath
-      server
-      ::path
-      (
-        Express.Static.make folder (Express.Static.defaultOptions ()) |> Express.Static.asMiddleware
-      )
+  | Route((HEAD, _, _)) => Js_exn.raiseError("not implemented yet")
+  | Route((GET, path, handler)) => App.get(server, ~path, Middleware.from(handler))
+  | Route((POST, path, handler)) => App.post(server, ~path, Middleware.from(handler))
+  | Route((PUT, _, _)) => Js_exn.raiseError("not implemented yet")
+  | Route((DELETE, _, _)) => Js_exn.raiseError("not implemented yet")
+  | Use(handler) => App.use(server, Middleware.from(handler))
+  | UseWithPath((path, handler)) => App.useOnPath(server, ~path, Middleware.from(handler))
+  | Static((path, folder)) =>
+    App.useOnPath(
+      server,
+      ~path,
+      Express.Static.make(folder, Express.Static.defaultOptions()) |> Express.Static.asMiddleware
+    )
   };
 
-let makeServer routes => {
-  let app = express ();
-  List.iter (applyRoute app) routes;
+let makeServer = (routes) => {
+  let app = express();
+  List.iter(applyRoute(app), routes);
   app
 };
 
-external dirname : string = "__dirname" [@@bs.val];
+[@bs.val] external dirname : string = "__dirname";
 
-external gett : 'a => string => Js.Json.t = "" [@@bs.get_index];
+[@bs.get_index] external gett : ('a, string) => Js.Json.t = "";
 
-external send : Express.Response.t => string => Express.done_ = "" [@@bs.send];
+[@bs.send] external send : (Express.Response.t, string) => Express.done_ = "";
 
-let geturl req => gett req "url";
+let geturl = (req) => gett(req, "url");
 
 module type Cell = {
   type locals;
   let view: locals => string;
-  let controller: Express.Request.t => Express.Response.t => Express.Next.t => Express.done_;
+  let controller: (Express.Request.t, Express.Response.t, Express.Next.t) => Express.done_;
 };
 
 module IndexCell: Cell = {
   type locals = {app: string};
-  let view (locals: locals) => {
+  let view = (locals: locals) => {
     let {app} = locals;
     {j|
       <html>
@@ -80,27 +79,26 @@ module IndexCell: Cell = {
       </html>
     |j}
   };
-  let controller req res _ => {
-    let context = Js_json.object_ @@ Js_dict.empty ();
-    let location = geturl req;
+  let controller = (req, res, _) => {
+    let context = Js_json.object_ @@ Js_dict.empty();
+    let location = geturl(req);
     let app =
-      ReactDOMServerRe.renderToString @@
-      <ServerRouter context location> <Routes /> </ServerRouter>;
-    send res @@ view {app: app}
+      ReactDOMServerRe.renderToString @@ <ServerRouter context location> <Routes /> </ServerRouter>;
+    send(res) @@ view({app: app})
   };
 };
 
 let routes = [
-  Static ("/public", Node_path.resolve dirname "../../../public"),
-  Route (GET, "*", IndexCell.controller)
+  Static(("/public", Node_path.resolve(dirname, "../../../public"))),
+  Route((GET, "*", IndexCell.controller))
 ];
 
-let app = makeServer routes;
+let app = makeServer(routes);
 
-let safeGetEnv default envvar =>
-  switch (Sys.getenv envvar) {
+let safeGetEnv = (default, envvar) =>
+  switch (Sys.getenv(envvar)) {
   | x => x
   | exception _ => default
   };
 
-App.listen app port::(int_of_string @@ safeGetEnv "3000" "SERVER_PORT") ();
+App.listen(app, ~port=int_of_string @@ safeGetEnv("3000", "SERVER_PORT"), ());

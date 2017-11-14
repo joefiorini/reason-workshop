@@ -28,6 +28,7 @@
     }
   ],
   "reason" : { "react-jsx" : 2 },
+  "refmt": 3,
   "bs-dependencies": [
     "bs-express",
     "reason-react"

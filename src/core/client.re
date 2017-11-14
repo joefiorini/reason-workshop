@@ -1,31 +1,33 @@
-external hot : bool = "module.hot" [@@bs.val];
+[@bs.val] external hot : bool = "module.hot";
 
-external accept : string => (unit => unit) => unit = "module.hot.accept" [@@bs.val];
+[@bs.val] external accept : (string, unit => unit) => unit = "module.hot.accept";
 
-external appContainer : ReasonReact.reactClass = "AppContainer" [@@bs.module "react-hot-loader"];
+[@bs.module "react-hot-loader"] external appContainer : ReasonReact.reactClass = "AppContainer";
 
 module AppContainer = {
-  let make children =>
-    ReasonReact.wrapJsForReason
-      reactClass::appContainer
-      props::(Js.Obj.empty ())
-      children;
+  let make = (children) =>
+    ReasonReact.wrapJsForReason(~reactClass=appContainer, ~props=Js.Obj.empty(), children);
 };
 
 open ReactRouter;
 
-let render c =>
-  ReactDOMRe.renderToElementWithClassName
-    <AppContainer> <BrowserRouter> (c ()) </BrowserRouter> </AppContainer> "app";
+let render = (c) =>
+  ReactDOMRe.renderToElementWithClassName(
+    <AppContainer> <BrowserRouter> (c()) </BrowserRouter> </AppContainer>,
+    "app"
+  );
 
-render (fun _ => <Routes />);
+render((_) => <Routes />);
 
-external highlightAll : unit => unit = "Prism.highlightAll" [@@bs.val];
+[@bs.val] external highlightAll : unit => unit = "Prism.highlightAll";
 
-if hot {
+if (hot) {
   /* accept "./routes.js" (fun _ => render (fun _ => <Routes />)); */
-  accept "./routes.js" (fun _ => {
-    render (fun _ => <Routes />);
-    highlightAll ();
-  });
+  accept(
+    "./routes.js",
+    (_) => {
+      render((_) => <Routes />);
+      highlightAll()
+    }
+  )
 };

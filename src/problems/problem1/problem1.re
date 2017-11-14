@@ -1,10 +1,10 @@
-let component = ReasonReact.statelessComponent "Problem1";
-let make _children => {
+let component = ReasonReact.statelessComponent("Problem1");
+
+let make = (_children) => {
   ...component,
-  render: fun _self => {
+  render: (_self) =>
     <div
-      /* use the ReasonReact.stringToElement function here to make this component render "ReasonML"  */
       /* reason ships with JSX support, similar to React's */
+      /* use the ReasonReact.stringToElement function here to make this component render "ReasonML"  */
     />
-  }
 };
