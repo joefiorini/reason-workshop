@@ -16,17 +16,18 @@ We use the builtin method `handle` to construct the event handlers. `handle` has
 
 ```reason
 (
-  'a =>
-  ReasonReact.stateless =>
-  ReasonReact.self ReasonReact.stateless =>
+  (
+    'a,
+    ReasonReact.self(...)
+  ) =>
   unit
 ) =>
-ReasonReact.Callback.t 'a
+ReasonReact.Callback.t('a)
 ```
 
-You should read this as: "handle takes a function of three variables (of types 'a, ReasonReact.stateless and ReasonReact.self ReasonReact.stateless) that returns unit, and returns a ReasonReact.Callback.t 'a".
+You should read this as: "handle takes a function of two variables (of types 'a and ReasonReact.self(...)) that returns unit, and returns a ReasonReact.Callback.t('a)".
 
-Event handlers (the function that handle takes) take three arguments.
+Event handlers (the function that handle takes) take two arguments.
 
 ### 'a - the event
 
@@ -36,18 +37,14 @@ Events in React are synthetic wrappers around the native browser event.
 
 You can extract the type you need by calling `ReactEventRe.<EventType>._type` and passing in the event. `type` is a reserved word in reason, so we prefix it with an underscore and the compiler magically transforms this into `type` in the actual call.
 
-### ReasonReact.stateless - the state object
-
-a record containing the current state of the component (if stateful) or an empty object if stateless.
-
-### ReasonReact.self ReasonReact.stateless | ReasonReact.self ReasonReact.stateful - the self object
+### ReasonReact.self(...) - the self object
 
 the `self` object, containing the update and handle functions, to be used to delegate the update behaviour other handlers by passing these functions, see <https://reasonml.github.io/reason-react/#reason-react-component-creation-self>
 
 ## Extracting the event type
 
 ```reason
-ReactEventRe.Mouse._type event
+ReactEventRe.Mouse._type(event)
 ```
 
 This is an idiomatic pattern in reason, where a module will define a type, and then define the operations that extract and change the data bound by that type. When you need to affect a type, it's a safe bet that the function you're looking for is stored in the module that the type is defined in.
