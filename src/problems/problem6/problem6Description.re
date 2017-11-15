@@ -17,16 +17,16 @@ For instance, we might see a module defined and consumed like so:
 module Card = {
   type suit = Spades | Hearts | Clubs | Diamonds;
   type face = One | Two | Three;
-  type card = Card (suit, face);
+  type card = Card(suit, face);
 
-  let show card => {
+  let show = (card) => {
     switch card {
-    | Card (Spades, One)=> "One of Spades"
-    | Card (Spades, Two)=> "Two of Spades"
-    | Card (Spades, Three)=> "Three of Spades"
-    | Card (Hearts, One)=> "One of Hearts"
-    | Card (Hearts, Two)=> "Two of Hearts"
-    | Card (Hearts, Three)=> "Three of Hearts"
+    | Card(Spades, One) => "One of Spades"
+    | Card(Spades, Two) => "Two of Spades"
+    | Card(Spades, Three) => "Three of Spades"
+    | Card(Hearts, One) => "One of Hearts"
+    | Card(Hearts, Two) => "Two of Hearts"
+    | Card(Hearts, Three) => "Three of Hearts"
     | _ => "impl"
     }
   };
@@ -34,56 +34,54 @@ module Card = {
 
 module Deck = {
   open Card;
-  type t = list card;
+  type t = list(card);
 
-  let (make: t) = [
-    Card (Spades, One),
-    Card (Spades, Two),
-    Card (Spades, Three),
-    Card (Hearts, One),
-    Card (Hearts, Two),
-    Card (Hearts, Three),
+  let make: t = [
+    Card(Spades, One),
+    Card(Spades, Two),
+    Card(Spades, Three),
+    Card(Hearts, One),
+    Card(Hearts, Two),
+    Card(Hearts, Three)
   ];
 
-  let draw (deck: t) : (card, list card) => {
-    (List.hd deck, List.tl deck);
+  let draw = (deck: t) : (card, list(card)) => {
+    (List.hd(deck), List.tl(deck))
   };
 
-  let show deck => {
-    List.fold_right (fun a b => (Card.show a) ^ " " ^ b) deck "";
+  let show = (deck) => {
+    List.fold_right((a, b) => Card.show(a) ++ " " ++ b, deck, "")
   };
 };
 
 module Hand = {
   open Card;
+  type t = list(card);
 
-  type t = list card;
   let maxSize = 5;
 
-  let show hand => {
-    List.fold_right (fun a b => (Card.show a) ^ " " ^ b) hand "";
+  let show = (hand) => {
+    List.fold_right((a, b) => Card.show(a) ++ " " ++ b, hand, "")
   };
 
-  let rec make' (deck: Deck.t) (hand: t) => {
-    if (List.length hand >= maxSize) {
-      (deck, hand);
+  let rec make' = (deck: Deck.t, hand: t) => {
+    if (List.length(hand) >= maxSize) {
+      (deck, hand)
     } else {
-
-      let (card', deck') = Deck.draw deck;
-      make' deck' [card', ...hand];
+      let (card', deck') = Deck.draw(deck);
+      make'(deck', [card', ...hand])
     }
   };
 
-  let make deck => make' deck [];
+  let make = (deck) => make'(deck, []);
 };
 
 /* in game.re */
 open Poker;
 
 let deck = Deck.make;
-let (_, hand) = Hand.make deck;
-Js.log @@ Hand.show hand;
-
+let (_, hand) = Hand.make(deck);
+Js.log @@ Hand.show(hand);
 ```
 
 By defining the modules inside one file, they can share types easily and co-locate and shared expressions.
