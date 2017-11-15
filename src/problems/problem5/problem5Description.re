@@ -16,7 +16,7 @@ You'll have noticed by now that ReasonML files have the extension `.re`. There's
 type encoding = string;
 type path = string;
 
-let read : path => encoding => string;
+let read : (path, encoding) => string;
 
 /* inside file.re */
 
@@ -24,7 +24,7 @@ let read : path => encoding => string;
 type encoding = string;
 type path = string;
 
-let read path encoding => {
+let read = (path, encoding) => {
   /* your implementation of File.read */
 };
 ```
@@ -32,20 +32,21 @@ let read path encoding => {
 This pair defines a module File that has one expression export `read` and two type exports `encoding` and `path`. We can use this module in a file like so:
 
 ```reason
-let contents = File.open "utf-8" "/home/user/file.txt";
+let contents = File.open("utf-8", "/home/user/file.txt");
 ```
 
 Modules are used to collect related functions and types. For instance, a list module might look like:
 
 ```reason
 /* list.re */
-type t 'a = Null | Cons 'a (t 'a);
-let rec map (f: 'a => 'b) (list: t 'a) : t 'b => {
-  switch (list) {
+type t('a) =
+  | Null
+  | Cons('a, t('a));
+let rec map = (f: 'a => 'b, list: t('a)) : t('b) =>
+  switch list {
   | Null => Null
-  | Cons a rest => Cons (f a) (map f rest)
+  | Cons(a, rest) => Cons(f(a), map(f, rest))
   };
-};
 ```
 
 This way, we can co-locate the List type `t` next to the functions that use it, making it easier to consume and to refactor. This is a common pattern in ReasonML and is considered idiomatic.
