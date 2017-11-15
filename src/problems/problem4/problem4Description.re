@@ -16,27 +16,28 @@ type state = { count: int, startingCount: int };
 /*
   creates a stateful component with a displyName "Counter".
   requires the make function that spreads the component to define:
-    * let initialState = fun () => state;
-    * let render = fun componentBag => ReasonReact.reactElement;
+    * let initialState = () => state;
+    * let render = (componentBag) => ReasonReact.reactElement;
 */
-let component = ReasonReact.statefulComponent "Counter";
+let component = ReasonReact.statefulComponent("Counter");
 
 /*
   define a function make that takes one prop, startingCount which has a default value of 0.
   also takes children, which we prepend with an underscore, so it is treated as an ignored var.
 */
-let make ::startingCount=0 _children => {
-  let handleClick _event {state} _self => {
-    ReasonReact.Update {...state, count: state.count + 1}
+let make = (~startingCount=0, _children) => {
+  let handleClick = (_event, self) => {
+    let state = self.ReasonReact.state;
+    ReasonReact.Update({...state, count: state.count + 1})
   };
   {
     ...component,
-    initialState: fun () => { count: 0, startingCount },
-    render: fun state {update} => {
-      <div onClick=(update handleClick)>
-        (ReasonReact.stringToElement {| Started on \$(state.startingCount). |})
-        (ReasonReact.stringToElement "Click Me")
-        (ReasonReact.stringToElement {| Clicked \$(state.count) times! |})
+    initialState: () => { count: 0, startingCount },
+    render: ({state, update}) => {
+      <div onClick=(update(handleClick))>
+        (ReasonReact.stringToElement({| Started on \$(state.startingCount). |}))
+        (ReasonReact.stringToElement("Click Me"))
+        (ReasonReact.stringToElement({| Clicked \$(state.count) times! |}))
       </div>
     }
   }
