@@ -10,23 +10,23 @@ A more relaxing problem after that last one. This problem will teach you the syn
 
 ```reason
 /* no good */
-let logProps Component => {
-  fun props => {
-    Js.log props;
+let logProps = Component => {
+  props => {
+    Js.log(props);
     <Component />;
   };
 };
 
 /* correct way */
-let logProps componentFunction => {
-  let props => {
-    Js.log props;
-    componentFunction props;
+let logProps = componentFunction => {
+  props => {
+    Js.log(props);
+    componentFunction(props);
   };
 };
 
 /* where componentFunction is defined at */
-let componentFunction props => <Component prop1=props.prop1 props2... />
+let componentFunction = (props) => <Component prop1=props.prop1 props2... />;
 ```
 
 Using this example, write your own react component, and pass it in as props into the Problem8Inner component. Make sure to update the Problem8Inner component's proptypes to accept a prop of the correct type.
