@@ -44,11 +44,11 @@ let makeServer = routes => {
   app;
 };
 
-[@bs.val] external dirname : string = "__dirname";
+[@bs.val] external dirname: string = "__dirname";
 
-[@bs.get_index] external gett : ('a, string) => Js.Json.t = "";
+[@bs.get_index] external gett: ('a, string) => Js.Json.t = "";
 
-[@bs.send] external send : (Express.Response.t, string) => complete = "";
+[@bs.send] external send: (Express.Response.t, string) => complete = "";
 
 let geturl = req => gett(req, "url");
 

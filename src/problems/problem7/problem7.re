@@ -40,10 +40,8 @@ let make = _children => {
       </div>
       (
         switch (state.shape) {
-        | Circle =>
-          <div> (ReasonReact.string("change me to a circle")) </div>
-        | Square =>
-          <div> (ReasonReact.string("change me to a square")) </div>
+        | Circle => <div> (ReasonReact.string("change me to a circle")) </div>
+        | Square => <div> (ReasonReact.string("change me to a square")) </div>
         }
       )
     </div>,

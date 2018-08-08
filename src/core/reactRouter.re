@@ -1,6 +1,6 @@
 module Route = {
   [@bs.module "react-router-dom"]
-  external route : ReasonReact.reactClass = "Route";
+  external route: ReasonReact.reactClass = "Route";
   let make =
       (
         ~exact: bool,
@@ -17,7 +17,7 @@ module Route = {
 
 module NavLink = {
   [@bs.module "react-router-dom"]
-  external navLink : ReasonReact.reactClass = "NavLink";
+  external navLink: ReasonReact.reactClass = "NavLink";
   let make = (~_to: string, children) =>
     ReasonReact.wrapJsForReason(
       ~reactClass=navLink,
@@ -28,7 +28,7 @@ module NavLink = {
 
 module BrowserRouter = {
   [@bs.module "react-router-dom"]
-  external browserRouter : ReasonReact.reactClass = "BrowserRouter";
+  external browserRouter: ReasonReact.reactClass = "BrowserRouter";
   let make = children =>
     ReasonReact.wrapJsForReason(
       ~reactClass=browserRouter,
@@ -39,7 +39,7 @@ module BrowserRouter = {
 
 module ServerRouter = {
   [@bs.module "react-router"]
-  external staticRouter : ReasonReact.reactClass = "StaticRouter";
+  external staticRouter: ReasonReact.reactClass = "StaticRouter";
   let make = (~context: Js.Json.t, ~location: Js.Json.t, children) =>
     ReasonReact.wrapJsForReason(
       ~reactClass=staticRouter,
@@ -49,6 +49,6 @@ module ServerRouter = {
 };
 
 [@bs.module "react-router"]
-external withRouter :
+external withRouter:
   ('a => ReasonReact.reactElement, 'a) => ReasonReact.reactElement =
   "";

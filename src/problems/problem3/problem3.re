@@ -1,8 +1,14 @@
-let boxStyle = ReactDOMRe.Style.make(~width="50px", ~height="50px", ~border="1px black solid", ());
+let boxStyle =
+  ReactDOMRe.Style.make(
+    ~width="50px",
+    ~height="50px",
+    ~border="1px black solid",
+    (),
+  );
 
 let component = ReasonReact.statelessComponent("Problem3");
 
-let make = (_children) => {
+let make = _children => {
   ...component,
   render: ({handle}) => {
     let handleClick = (_, _) =>
@@ -16,6 +22,6 @@ let make = (_children) => {
       onClick=(handle(handleClick))
       onMouseEnter=(handle(handleHover))
       onMouseLeave=(handle(handleHover))
-    />
-  }
+    />;
+  },
 };
