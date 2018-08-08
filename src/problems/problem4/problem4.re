@@ -4,26 +4,20 @@ let clickedStyle = ReactDOMRe.Style.make();
 
 let hoveredStyle = ReactDOMRe.Style.make();
 
-let boxStyle = ReactDOMRe.Style.make(~width="50px", ~height="50px", ~border="1px black solid", ());
+let boxStyle =
+  ReactDOMRe.Style.make(
+    ~width="50px",
+    ~height="50px",
+    ~border="1px black solid",
+    (),
+  );
 
 type state = {
   hovered: bool,
-  clicked: bool
+  clicked: bool,
 };
 
-let handleClick = (_event, {ReasonReact.state}) =>
-  /* change this function to return the existing state
-     with the clicked prop set to true. you can use the object spread operator
-     { ...state, foo: bar } */
-  ReasonReact.Update(state);
-
-let handleHover = (_event, {ReasonReact.state}) =>
-  /* change this function to return the existing state
-     with the hovered prop set to true. you can use the object spread operator
-     { ...state, foo: bar } */
-  ReasonReact.Update(state);
-
-let switchStyle = (state) =>
+let switchStyle = state =>
   switch (state.clicked, state.hovered) {
   /* add the cases so that:
      clicked: true hovered: false => clicked style
@@ -33,18 +27,33 @@ let switchStyle = (state) =>
   | _ => normalStyle
   };
 
-let component = ReasonReact.statefulComponent("Problem4");
+type action =
+  | Clicked
+  | Hovered;
 
-let make = (_children) => {
+let component = ReasonReact.reducerComponent("Problem4");
+
+let make = _children => {
   ...component,
   initialState: () => {hovered: false, clicked: false},
-  render: ({state, update}) => {
+  reducer: (action, _state) =>
+    switch (action) {
+    /* change this branch to return the existing state
+       with the clicked prop set to true. you can use the object spread operator
+       { ...state, foo: bar } */
+    | Clicked => ReasonReact.NoUpdate
+    /* change this branch to return the existing state
+       with the hovered prop set to true. you can use the object spread operator
+       { ...state, foo: bar } */
+    | Hovered => ReasonReact.NoUpdate
+    },
+  render: ({state, send}) => {
     let style = switchStyle(state);
     <div
       style=(ReactDOMRe.Style.combine(boxStyle, style))
-      onClick=(update(handleClick))
-      onMouseEnter=(update(handleHover))
-      onMouseLeave=(update(handleHover))
-    />
-  }
+      onClick=(_ => send(Clicked))
+      onMouseEnter=(_ => send(Hovered))
+      onMouseLeave=(_ => send(Hovered))
+    />;
+  },
 };

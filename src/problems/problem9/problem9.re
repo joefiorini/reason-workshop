@@ -13,17 +13,23 @@ module Problem9Text = {
 };
 
 type state = {color: string};
+type action = ChangeColor;
 
-let component = ReasonReact.statefulComponent("Problem9");
+let component = ReasonReact.reducerComponent("Problem9");
 
 let make = (_children) => {
   ...component,
   initialState: () => {color: "black"},
-  render: ({state, update}) =>
+  reducer: (action, _state) => {
+    switch (action) {
+    | ChangeColor => ReasonReact.NoUpdate
+    }
+  },
+  render: ({state, send}) =>
     <div>
       <Problem9Text
         color=state.color
-        onClick=(update((_event, {state}) => ReasonReact.Update(state)))
+        onClick=(send(ChangeColor))
       />
     </div>
 };

@@ -35,9 +35,9 @@ let make = (~startingCount=0, _children) => {
     initialState: () => { count: 0, startingCount },
     render: ({state, update}) => {
       <div onClick=(update(handleClick))>
-        (ReasonReact.stringToElement({| Started on \$(state.startingCount). |}))
-        (ReasonReact.stringToElement("Click Me"))
-        (ReasonReact.stringToElement({| Clicked \$(state.count) times! |}))
+        (ReasonReact.string({| Started on \$(state.startingCount). |}))
+        (ReasonReact.string("Click Me"))
+        (ReasonReact.string({| Clicked \$(state.count) times! |}))
       </div>
     }
   }

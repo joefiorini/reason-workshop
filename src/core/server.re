@@ -2,7 +2,7 @@ open Express;
 
 open ReactRouter;
 
-type middlewareFn = (Request.t, Response.t, Next.t) => done_;
+type middlewareFn = Middleware.f;
 
 type method =
   | HEAD
@@ -18,40 +18,45 @@ type route =
   | Static((string, string));
 
 let applyRoute = (server, route) =>
-  switch route {
+  switch (route) {
   | Route((HEAD, _, _)) => Js_exn.raiseError("not implemented yet")
-  | Route((GET, path, handler)) => App.get(server, ~path, Middleware.from(handler))
-  | Route((POST, path, handler)) => App.post(server, ~path, Middleware.from(handler))
+  | Route((GET, path, handler)) =>
+    App.get(server, ~path, Middleware.from(handler))
+  | Route((POST, path, handler)) =>
+    App.post(server, ~path, Middleware.from(handler))
   | Route((PUT, _, _)) => Js_exn.raiseError("not implemented yet")
   | Route((DELETE, _, _)) => Js_exn.raiseError("not implemented yet")
   | Use(handler) => App.use(server, Middleware.from(handler))
-  | UseWithPath((path, handler)) => App.useOnPath(server, ~path, Middleware.from(handler))
+  | UseWithPath((path, handler)) =>
+    App.useOnPath(server, ~path, Middleware.from(handler))
   | Static((path, folder)) =>
     App.useOnPath(
       server,
       ~path,
-      Express.Static.make(folder, Express.Static.defaultOptions()) |> Express.Static.asMiddleware
+      Express.Static.make(folder, Express.Static.defaultOptions())
+      |> Express.Static.asMiddleware,
     )
   };
 
-let makeServer = (routes) => {
+let makeServer = routes => {
   let app = express();
   List.iter(applyRoute(app), routes);
-  app
+  app;
 };
 
 [@bs.val] external dirname : string = "__dirname";
 
 [@bs.get_index] external gett : ('a, string) => Js.Json.t = "";
 
-[@bs.send] external send : (Express.Response.t, string) => Express.done_ = "";
+[@bs.send] external send : (Express.Response.t, string) => complete = "";
 
-let geturl = (req) => gett(req, "url");
+let geturl = req => gett(req, "url");
 
 module type Cell = {
   type locals;
   let view: locals => string;
-  let controller: (Express.Request.t, Express.Response.t, Express.Next.t) => Express.done_;
+  let controller:
+    (Express.Next.t, Express.Request.t, Express.Response.t) => complete;
 };
 
 module IndexCell: Cell = {
@@ -77,20 +82,21 @@ module IndexCell: Cell = {
           <script src="/public/bundle.js"></script>
         </body>
       </html>
-    |j}
+    |j};
   };
-  let controller = (req, res, _) => {
+  let controller = (_, req, res) => {
     let context = Js_json.object_ @@ Js_dict.empty();
     let location = geturl(req);
     let app =
-      ReactDOMServerRe.renderToString @@ <ServerRouter context location> <Routes /> </ServerRouter>;
-    send(res) @@ view({app: app})
+      ReactDOMServerRe.renderToString @@
+      <ServerRouter context location> <Routes /> </ServerRouter>;
+    send(res) @@ view({app: app});
   };
 };
 
 let routes = [
   Static(("/public", Node_path.resolve(dirname, "../../../public"))),
-  Route((GET, "*", IndexCell.controller))
+  Route((GET, "*", IndexCell.controller)),
 ];
 
 let app = makeServer(routes);
@@ -101,4 +107,8 @@ let safeGetEnv = (default, envvar) =>
   | exception _ => default
   };
 
-App.listen(app, ~port=int_of_string @@ safeGetEnv("3000", "SERVER_PORT"), ());
+App.listen(
+  app,
+  ~port=int_of_string @@ safeGetEnv("3000", "SERVER_PORT"),
+  (),
+);

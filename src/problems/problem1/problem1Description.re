@@ -27,11 +27,11 @@ let make = (_children) => {
 }
 ```
 
-We'll touch on modules, records and everything else as we go through this workshop. For now, let's begin by getting some text to render on the screen. Open the file: src/problem1/problem1.re and edit the file so that the render method returns some JSX that will print "ReasonML". Bear in mind that you can't embed a string inside reason's JSX, and must instead make a call to ReasonReact.stringToElement like below:
+We'll touch on modules, records and everything else as we go through this workshop. For now, let's begin by getting some text to render on the screen. Open the file: src/problem1/problem1.re and edit the file so that the render method returns some JSX that will print "ReasonML". Bear in mind that you can't embed a string inside reason's JSX, and must instead make a call to ReasonReact.string like below:
 
 ```reason
 <div>
-  (ReasonReact.stringToElement("a string to render"))
+  (ReasonReact.string("a string to render"))
 </div>
 ```
 |};

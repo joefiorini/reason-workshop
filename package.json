@@ -9,18 +9,16 @@
     "watch": "npm-run-all --parallel -c run bundle-watch build-watch"
   },
   "dependencies": {
-    "bs-express": "^0.0.5",
-    "bs-platform": "^2.0.0",
+    "bs-express": "^0.8.0",
+    "bs-platform": "^4.0.3",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
-    "react": "15.4.0",
-    "react-dom": "15.4.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-markdown": "^2.5.0",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "reason-react": "^0.2.4",
+    "reason-react": "^0.5.3",
     "webpack": "^2.4.1",
     "webpack-dev-middleware": "^1.10.2",
     "webpack-dev-server": "^2.4.5"
